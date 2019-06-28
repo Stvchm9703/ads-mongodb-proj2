@@ -17,6 +17,7 @@ devDependencies:
   node-sass: 4.12.0
   sass-loader: 7.1.0
   vue-cli-plugin-electron-builder: 1.3.5
+  vue-cli-plugin-vuex-module-generator: 0.1.1
   vue-template-compiler: 2.6.10
 lockfileVersion: 5.1
 packages:
@@ -2583,12 +2584,12 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-0y0VlNmdD99GXZHYnvrQcmHxP8Bi6T00qucGgBgGv4kJ0RyDthNnnFPupHV7PYv/OXSVk+azFbOeaW6+vGmx9A==
-  /cli-spinners/2.1.0:
+  /cli-spinners/2.2.0:
     dev: true
     engines:
       node: '>=6'
     resolution:
-      integrity: sha512-8B00fJOEh1HPrx4fo5eW16XmE1PcL1tGpGrxy63CXGP9nHdPBN63X75hA1zhvQuhVztJWLqV58Roj2qlNM7cAA==
+      integrity: sha512-tgU3fKwzYjiLEQgPMD9Jt+JjHVL9kW93FiIMX/l7rivvOD4/LL0Mf7gda3+4U2KJBloybwgj5KEoQgGRioMiKQ==
   /cli-width/2.2.0:
     dev: true
     resolution:
@@ -7065,7 +7066,7 @@ packages:
     dependencies:
       chalk: 2.4.2
       cli-cursor: 2.1.0
-      cli-spinners: 2.1.0
+      cli-spinners: 2.2.0
       log-symbols: 2.2.0
       strip-ansi: 5.2.0
       wcwidth: 1.0.1
@@ -9994,6 +9995,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-wVzwTInnfxI66TGLMZ4IKgJ5QJ/oqVdpdBpx+yvLTV5bPbKY+Czge/z5SsQBob0tDVWTC8rzwgPpu70WvNt+HQ==
+  /vue-cli-plugin-vuex-module-generator/0.1.1:
+    dev: true
+    resolution:
+      integrity: sha512-P8XrEWXirQhmf0B4dmomC0vaEM+R49rtgmpDyCOjhMXeUnLiDQJqbbGImiw29Tw1bL//kIm3Ccwo2+aqURGA0A==
   /vue-eslint-parser/2.0.3_eslint@4.19.1:
     dependencies:
       debug: 3.2.6
@@ -10716,6 +10721,7 @@ specifiers:
   sass-loader: ^7.1.0
   vue: ^2.6.10
   vue-cli-plugin-electron-builder: ^1.3.5
+  vue-cli-plugin-vuex-module-generator: ^0.1.1
   vue-router: ^3.0.3
   vue-template-compiler: ^2.6.10
   vuex: ^3.0.1
