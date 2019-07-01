@@ -1,4 +1,4 @@
-import ipcApiClient from '@/plugin/ipcApiClient.js';
+import ipcApiClient from '@/plugin/model.js';
 import getters from './getters';
 import actions from './actions';
 import mutations from './mutations';

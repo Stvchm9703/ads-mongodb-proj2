@@ -48,11 +48,12 @@ export default class DBClass {
                 db: this.db
             };
         } else {
-            return Promise.reject(err);
+            return new Promise.reject(err);
         }
     }
+
     async Disconnect() {
-        this.server.close();
+        return this.server.close();
     }
 
     async CheckModel(md) {
@@ -67,18 +68,17 @@ export default class DBClass {
                     key: e,
                     type: typeof e
                 }));
-                // console.log(tmp);
                 return {
                     model: tmp
-                }
+                };
             } else {
-                return Promise.reject(new Error({
+                return new Promise.reject(new Error({
                     error: 'ERR_COLL',
                     collection: coll
                 }));
             }
         } else {
-            return Promise.reject(new Error({
+            return new Promise.reject(new Error({
                 error: 'ERR_DB_CONN_ERR'
             }));
         }
@@ -103,16 +103,16 @@ export default class DBClass {
                         }
                     }
                 }).then((r) => {
-                    return r
+                    return r;
                 }).catch(e => {
-                    return Promise.reject(new Error({
+                    return new Promise.reject(new Error({
                         error: 'ERR_COLL',
                         msg: e
                     }));
                 });
             }
         } else {
-            return Promise.reject(new Error({
+            return new Promise.reject(new Error({
                 error: 'ERR_DB_CONN_ERR'
             }));
         }
@@ -126,21 +126,21 @@ export default class DBClass {
             if (coll.length === 1) {
                 let rec = this.db.collection(md_name).insertOne(rec)
                     .then((result) => {
-                        return result
+                        return result;
                     })
                     .catch((e) => {
-                        return Promise.reject(new Error({
+                        return new Promise.reject(new Error({
                             error: 'ERR_INSERT_REC',
                             msg: e
                         }));
                     });
             } else {
-                return Promise.reject(new Error({
+                return new  Promise.reject(new Error({
                     error: 'ERR_COLL_NOT_EXIST'
                 }));
             }
         } else {
-            return Promise.reject(new Error({
+            return new Promise.reject(new Error({
                 error: 'ERR_DB_CONN_ERR'
             }));
         }

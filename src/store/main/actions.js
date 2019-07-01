@@ -1,4 +1,4 @@
-import ipcApi from '@/plugin/ipcApiClient.js';
+import ipcApi from '@/plugin/model.js';
 
 var Action = {
     ...ipcApi.BaseAction,

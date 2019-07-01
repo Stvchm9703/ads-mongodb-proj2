@@ -5,7 +5,7 @@ import {
     createProtocol,
     installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib';
-import IPC_Channel from './plugin/ipcApiChannel.js';
+// import IPC_Channel from './plugin/ipcApiChannel.js';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -17,8 +17,8 @@ let win;
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }]);
 dialog.showErrorBox = (title, content) => {
     console.warn(`${title}\n${content}`);
-}
-IPC_Channel.InitChannel();
+};
+// IPC_Channel.InitChannel();
 
 function createWindow () {
     // Create the browser window.

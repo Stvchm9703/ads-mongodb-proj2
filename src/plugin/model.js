@@ -3,13 +3,7 @@
 
 // https://blog.hinablue.me/vuex-vuex-de-wu-shi-dao-yin-ying/
 // https: //blog.hinablue.me/vuejs-vuex-2-0-guan-yu-plugins-de-shi-qing/
-
-import {
-    ipcRenderer
-} from 'electron';
-
-
-
+import DBConnect from "./db.js";
 
 var BaseState = {
     _coll_name: "",
@@ -44,6 +38,7 @@ var BaseGetter = {
     _getCollProps
 };
 
+
 var _getModelKey = (model) => {
     let state = model['state'];
     console.log(state);
@@ -58,18 +53,13 @@ var _checkModel = async (model) => {
     console.log(model);
     // let timeout = 
     if (model) {
-        let y  = await ipcRenderer.sendSync('db/checkModel', model);
-        // setTimeout(() => {
-        console.log(y);
-        // }, 5000);
-        // .then(result => {
-        //     console.warn(result);
-        //     return result;
-        // }, err=>{
-        //     console.warn(err);
-        //     return err;
-        // });
-        return y;
+        let y = await DBserver.CheckModel();
+        if (y.error) {
+            return Promise.reject(y.error);
+        }
+        else {
+            return y;
+        }
     } else {
         return Promise.reject( new Error({
             error : 'ERR_MOD_NUL',
@@ -95,6 +85,7 @@ var _initModel = async (module, payload) => {
 var _saveToDB = async (model, payload) => {
 
 };
+
 var _createModel = (model) => {};
 
 var BaseAction = {
@@ -105,9 +96,37 @@ var BaseAction = {
     // _fetchModel,
 };
 
+// DB server 
+var conn = {
+    host: "localhost",
+    port: 27017,
+    dbName: "scope_ADS"
+};
+
+var DBserver = null;
+
+var InitDB = async () => {
+    DBserver = new DBConnect();
+    DBserver.Connect(conn).then((result) => {
+        console.log('connection');
+        console.trace(result);
+        return result;
+    }, (err) => {
+        console.log("-----");
+        console.log('hi, your server is not connected');
+        console.warn(err);
+        return new Promise.reject(err);
+    });
+};
+
+var CloseDB = async () =>{
+    return DBserver.Disconnect();
+};
 
 var _plugin_onInit = async (store) => {
     console.log(store);
+    // init db
+    await InitDB();
     let store_act = Object.keys(store._actions);
     let init_call = store_act.filter(key => key.indexOf('_initModel') > -1);
     init_call.forEach(callee => {
@@ -124,15 +143,7 @@ function fetchUserData() {
         // init 
         _plugin_onInit(store);
 
-        // store.subscribe((mutation, state) => {
-        //     console.log("call fm subscrible")
-        //     console.log(mutation);
-        // //     // if (mutation.type === 'router/ROUTE_CHANGED') {
-        // //     //     // 由於 Vue-Router 會觸發 ROUTE_CHANGED
-        // //     //     // 所以我們只在這個時候作一次，避免重複被觸發
-        // //     //     store.dispatch('fetchUserData')
-        // //     // }
-        // });
+      
     };
 }
 

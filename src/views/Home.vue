@@ -10,15 +10,15 @@
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue';
 import {mapActions} from 'vuex';
-import { ipcRenderer } from 'electron';
+// import { ipcRenderer } from 'electron';
 export default {
     name: 'home',
     components: {
         HelloWorld
     },
     mounted () {
-        let y = ipcRenderer.sendSync('log', 'arg');
-        console.log(y);
+        // let y = ipcRenderer.sendSync('log', 'arg');
+        // console.log(y);
         this.d();
         // this.e().then((f)=>{
         //     console.log(f);
@@ -27,7 +27,8 @@ export default {
     },
     methods: {
         SendSyncD: async function () {
-            let t = await ipcRenderer.sendSync('log1', 'arg1');
+            // let t = await ipcRenderer.sendSync('log1', 'arg1');
+            let t =0;
             return t;
         },
         buttonClick: function (e) {

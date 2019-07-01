@@ -36,12 +36,8 @@ export default {
     }),
 
     mounted:  function(){
-        // this.dbconn = new DBConnect(conn);
-        // console.log(this.dbconn);
-    // console.log(DBConnect)
     },
     beforeDestroy: function(){
-        // this.dbconn.Disconnect();
     }
 };
 </script>
