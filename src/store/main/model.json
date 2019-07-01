@@ -1,0 +1,18 @@
+{
+    "$info": {
+        "name": "call_log",
+        "options": {}
+    },
+    "$struct": {
+        "name": {
+            "$type": "string",
+            "description": "must be a string and is required",
+            "pattern": "@mongodb\\.com$",
+            "required" : true
+        },
+        "startDate": {
+            "$type": "date",
+            "required": true
+        }
+    }
+}
