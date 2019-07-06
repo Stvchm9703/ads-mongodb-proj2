@@ -28,16 +28,11 @@
 }
 </style>
 <script>
-
-
 export default {
-    data : ()=>({
-        // dbconn : nulls
-    }),
-
-    mounted:  function(){
-    },
-    beforeDestroy: function(){
+    data : ()=>({}),
+    mounted(){},
+    beforeDestroy() {
+        this.$store.dispatch('onDestroy');
     }
 };
 </script>

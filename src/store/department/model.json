@@ -1,0 +1,70 @@
+{
+    "$info": {
+        "name": "department",
+        "options": {}
+    },
+    "$struct": {
+        "DeptID": {
+            "bsonType": "string",
+            "description": "must be a string and is required",
+            "required": true,
+            "sample" : "scope_000000"
+        },
+        "DeptName": {
+            "bsonType": "object",
+            "description": "must be a string and is required"
+        },
+        "DeptName.LongTerm": {
+            "bsonType": "string",
+            "description": "must be a string and is required",
+            "required": true,
+            "sample": "scope sample department"
+        },
+        "DeptName.ShortTerm": {
+            "bsonType": "string",
+            "description": "must be a string and is required",
+            "required": true,
+            "sample" : "smpl"
+        },
+
+        "Location": {
+            "bsonType": "object",
+            "required": true
+        },
+        "Location.Dist": {
+            "bsonType" : "string",
+            "required": false,
+            "sample" : "hong kong"
+        },
+        "Location.SubDist": {
+            "bsonType": "string",
+            "required": false,
+            "sample": "Kowloon"
+        },
+        "Location.Street": {
+            "bsonType": "string",
+            "required": false,
+            "sample": "street 1"
+        },
+        "Location.Building": {
+            "bsonType": "string",
+            "required": false,
+            "sample": "building A"
+        },
+        "Location.Block": {
+            "bsonType": "string",
+            "required": false,
+            "sample": "block A"
+        },
+        "Location.floor": {
+            "bsonType": "string",
+            "required": false,
+            "sample": "floor 1"
+        },
+        "Location.Room": {
+            "bsonType": "string",
+            "required": false,
+            "sample": "room 100"
+        }
+    }
+}

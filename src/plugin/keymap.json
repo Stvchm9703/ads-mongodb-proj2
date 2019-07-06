@@ -1,0 +1,16 @@
+{
+    "$info": {
+        "name": "_keymap",
+        "options": {}
+    },
+    "$struct": {
+        "namespace": {
+            "bsonType": "string",
+            "description": "must be a string and is required",
+            "sample": "scope_000000"
+        },
+        "buildInfo" : {
+            "bsonType" : "object"
+        }
+    }
+}

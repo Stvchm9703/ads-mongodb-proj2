@@ -5,6 +5,8 @@
 // https: //blog.hinablue.me/vuejs-vuex-2-0-guan-yu-plugins-de-shi-qing/
 import DBConnect from "./db.js";
 
+
+
 var BaseState = {
     _coll_name: "",
     _page_num: 0,
@@ -49,101 +51,103 @@ var _getModelKey = (model) => {
         return [];
     }
 };
+
 var _checkModel = async (model) => {
     console.log(model);
     // let timeout = 
     if (model) {
-        let y = await DBserver.CheckModel();
-        if (y.error) {
-            return Promise.reject(y.error);
-        }
-        else {
-            return y;
-        }
+        return DBserver.CheckModel(model);
     } else {
-        return Promise.reject( new Error({
-            error : 'ERR_MOD_NUL',
-            msg : model
-        }));
+        throw {
+            error: 'ERR_MOD_NULL',
+            msg: model
+        };
     }
 };
+
+/* eslint-disable */
+/* eslint-enable */
+var _createModel = (model) => {
+    // add checker
+    if (model && model.$info && model.$struct) {
+        DBserver.CreateModel(model).then(() => {
+            // success, test insert 
+            let struct = Object.assign({}, model.$struct);
+            let sample_obj = {};
+            Object.keys(struct).forEach((e) => {
+                sample_obj[e] = struct[e].sample;
+            });
+            return DBserver.CreateRecord(model.$info.name, sample_obj);
+        }, (err) => {
+            throw err;
+        });
+
+    } else {
+        throw {
+            error: 'ERR_MOD_NULL',
+            model,
+        }
+    }
+};
+
+
 var _initModel = async (module, payload) => {
     console.log("call _init Model");
     console.log(module.state.template);
-    // start checking
-    let result = await _checkModel(module.state.template);
-    console.log(result);
-    // if (result.error) {
-    //     console.warn(result.error);
-    //     return _createModel(module.state.template);
-    // }
-    // else {
-    //     return result.model;
-    // }
-
-};
-var _saveToDB = async (model, payload) => {
-
+    _checkModel(module.state.template).then((r) => {
+        return r.model;
+    }, (err) => {
+        console.warn(err);
+        return _createModel(module.state.template);
+    });
 };
 
-var _createModel = (model) => {};
+var _saveToDB = async (model, payload) => {};
+
 
 var BaseAction = {
     _getModelKey,
     _checkModel,
     _initModel,
     _saveToDB,
-    // _fetchModel,
 };
 
-// DB server 
-var conn = {
-    host: "localhost",
-    port: 27017,
-    dbName: "scope_ADS"
-};
 
 var DBserver = null;
 
-var InitDB = async () => {
+var InitDB = async (conn) => {
     DBserver = new DBConnect();
-    DBserver.Connect(conn).then((result) => {
-        console.log('connection');
-        console.trace(result);
-        return result;
-    }, (err) => {
-        console.log("-----");
-        console.log('hi, your server is not connected');
-        console.warn(err);
-        return new Promise.reject(err);
-    });
+    return DBserver.Connect(conn);
 };
-
-var CloseDB = async () =>{
+/* eslint-disable */
+var CloseDB = async () => {
     return DBserver.Disconnect();
 };
-
-var _plugin_onInit = async (store) => {
+/* eslint-enable */
+var _plugin_onInit = async (store, conf) => {
     console.log(store);
     // init db
-    await InitDB();
-    let store_act = Object.keys(store._actions);
-    let init_call = store_act.filter(key => key.indexOf('_initModel') > -1);
-    init_call.forEach(callee => {
-        store.dispatch(callee);
+    InitDB(conf).then((e) => {
+        console.log(e);
+        let store_act = Object.keys(store._actions);
+        let init_call = store_act.filter(key => key.indexOf('_initModel') > -1);
+        init_call.forEach(callee => {
+            console.log('call to :', callee);
+            store.dispatch(callee);
+        });
     });
 };
-
-var _plugin_onDestory = async (store) => {
-
+/* eslint-disable */
+var _plugin_onDestroy = async (store) => {
+    return await CloseDB();
 };
+/* eslint-enable */
+
 // Vuex Plugin 
-function fetchUserData() {
+function fetchUserData(conf) {
     return store => {
         // init 
-        _plugin_onInit(store);
-
-      
+        _plugin_onInit(store, conf);
     };
 }
 
@@ -151,5 +155,6 @@ export default {
     BaseState,
     BaseGetter,
     BaseAction,
+    pluginOnDestroy: _plugin_onDestroy,
     fetchUserData
 };

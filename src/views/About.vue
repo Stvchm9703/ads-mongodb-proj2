@@ -5,8 +5,6 @@
 </template>
 <script>
 export default {
-    mounted (){
-    // this.$store.dispatch('is_event' , "dis");
-    }
+    mounted (){}
 };
 </script>

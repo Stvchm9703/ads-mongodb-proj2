@@ -1,6 +1,7 @@
 import {
     MongoClient
 } from 'mongodb';
+import keymap from './keymap.json';
 // import {reject} from Promise;
 /**
  * common connection with setting
@@ -19,102 +20,168 @@ const connUrl = (_c) => {
         return "mongodb://" + _c.host + ":" + _c.port;
 };
 
+/* eslint-disable */
 const createVaildator = (md) => {
     let Schema = {
         bsonType: "object",
         properties: md.$struct
     };
-
-
     return Schema;
-
 };
-
+/* eslint-enable */
 export default class DBClass {
     constructor() {
         this.server;
         this.db;
-
     }
     async Connect(_conn) {
+        console.log('connect db', _conn);
         let str = connUrl(_conn);
         this.server = new MongoClient(str, {
-            useNewUrlParser: true
+            useNewUrlParser: true,
+            keepAlive: 60000,
         });
         let connRe = await this.server.connect();
         if (connRe) {
+            console.log(_conn.dbName);
+            this.db = await this.server.db(_conn.dbName);
+            this.db.collection('_key_')
             return {
+                db: this.db,
                 server: this.server,
-                db: this.db
             };
         } else {
-            return new Promise.reject(err);
+            console.log(conn);
+            throw ({});
         }
     }
 
     async Disconnect() {
-        return this.server.close();
+        if (this.db) {
+            await this.db.close();
+        }
+        await this.server.close();
+        return true;
     }
+
+    async initKeyMap() {
+        if (this.db) {
+            return this.db.createCollection(keymap.$info.name, {
+                validator: {
+                    $jsonSchema: {
+                        bsonType: "object",
+                        properties: keymap.$struct
+                    }
+                }
+            });
+        } else {
+            throw ({
+                error: 'ERR_DB_CONN_ERR',
+                db: this.db
+            });
+        }
+    }
+
 
     async CheckModel(md) {
         console.log('touch');
+        console.log(this.db);
         if (this.db) {
-            let coll = await this.db.getCollectionInfos({
-                name: md.$info.name
+
+            let coll = await this.db.collections();
+            coll = coll.filter(c => c.collectionName === md.$info.name);
+            console.log(coll);
+
+            // .find();
+
+            let keymap = await this.db.collection('_key_map').find({
+                'namespace': md.$info.name
             });
-            if (coll.length === 1) {
-                let sample = await this.db.collection(md.$info.name).findOne();
-                let tmp = Object.keys(sample).map(e => ({
-                    key: e,
-                    type: typeof e
-                }));
-                return {
-                    model: tmp
-                };
+            console.log(keymap);
+            if (coll.length === 1 && keymap) {
+                return keymap.buildInfo;
+            } else if (coll.length === 1 && !keymap) {
+                console.warn('buildInfo keymap missing');
+                throw {
+                    error: 'ERR_COLL_NO_KEYMAP',
+                    keymap
+                }
+            } else if (coll.length !== 1 && keymap) {
+                throw {
+                    error: 'ERR_COLL_BUILD_MISSING'
+                }
             } else {
-                return new Promise.reject(new Error({
+                throw ({
                     error: 'ERR_COLL',
                     collection: coll
-                }));
+                });
             }
         } else {
-            return new Promise.reject(new Error({
-                error: 'ERR_DB_CONN_ERR'
-            }));
+            throw ({
+                error: 'ERR_DB_CONN_ERR',
+                db: this.db
+            });
         }
     }
 
     async CreateModel(md) {
+        console.log('create model process')
+        console.log(this.db);
         if (this.db) {
-            let coll = await this.db.getCollectionInfos({
-                name: md.$info.name
-            });
+            let coll = await this.db.collections();
+            coll = coll.filter(c => c.collectionName === md.$info.name);
             if (coll.length !== 0) {
-                throw new Error({
+                throw ({
                     error: 'ERR_COLL_EXIST'
                 });
             } else {
                 // not exist 
+                let struction = Object.assign({}, md.$struct);
+                let struct_key = [];
+                let n_struct = {};
+                Object.keys(md.$struct).forEach((e) => {
+                    // console.log(struction[e]);
+                    let tmp = Object.assign({}, struction[e]);
+                    delete tmp.required;
+                    delete tmp.sample;
+                    n_struct[e] = tmp;
+                    if (struction[e].required) {
+                        struct_key.push(e);
+                    }
+                });
+                let options = {
+                    ...md.$struct.options,
+                    required: struct_key
+                }
+                console.log(options);
                 this.db.createCollection(md.$info.name, {
                     validator: {
                         $jsonSchema: {
                             bsonType: "object",
-                            properties: md.$struct
+                            properties: n_struct,
+                            ...options
                         }
                     }
-                }).then((r) => {
-                    return r;
-                }).catch(e => {
-                    return new Promise.reject(new Error({
-                        error: 'ERR_COLL',
-                        msg: e
-                    }));
+                }).then(() => {
+                    // success create 
+                    // insert the key maping
+                    return this.db.collection("_key_map").insertOne({
+                        "namespace": md.$info.name,
+                        "buildInfo": md
+                    });
+                }, (err) => {
+                    throw {
+                        error: "ERR_COLL_CREATE_FAIL",
+                        msg: err
+                    }
                 });
+                // console.log(result);
+
             }
         } else {
-            return new Promise.reject(new Error({
+            throw ({
                 error: 'ERR_DB_CONN_ERR'
-            }));
+            });
         }
     }
 
@@ -124,25 +191,16 @@ export default class DBClass {
                 name: md_name
             });
             if (coll.length === 1) {
-                let rec = this.db.collection(md_name).insertOne(rec)
-                    .then((result) => {
-                        return result;
-                    })
-                    .catch((e) => {
-                        return new Promise.reject(new Error({
-                            error: 'ERR_INSERT_REC',
-                            msg: e
-                        }));
-                    });
+                return this.db.collection(md_name).insertOne(rec);
             } else {
-                return new  Promise.reject(new Error({
+                throw ({
                     error: 'ERR_COLL_NOT_EXIST'
-                }));
+                });
             }
         } else {
-            return new Promise.reject(new Error({
+            throw ({
                 error: 'ERR_DB_CONN_ERR'
-            }));
+            });
         }
     }
 }
