@@ -33,6 +33,7 @@ export default class DBClass {
     constructor() {
         this.server;
         this.db;
+        this.keymap;
     }
     async Connect(_conn) {
         console.log('connect db', _conn);
@@ -45,11 +46,23 @@ export default class DBClass {
         if (connRe) {
             console.log(_conn.dbName);
             this.db = await this.server.db(_conn.dbName);
-            this.db.collection('_key_')
-            return {
-                db: this.db,
-                server: this.server,
-            };
+            let coll = await this.db.collections();
+            coll = coll.filter(c => c.collectionName === '_key_map');
+            if (coll.length === 1) {
+                this.keymap = await this.db.collection('_key_map');
+                return {
+                    db: this.db,
+                    server: this.server,
+                    keymap: this.keymap,
+                };
+            } else {
+                throw ({
+                    error: 'ERR_MISSING_KEYMAP',
+                    db: this.db,
+                    server: this.server,
+                    keymap: this.keymap,
+                });
+            }
         } else {
             console.log(conn);
             throw ({});
@@ -84,10 +97,7 @@ export default class DBClass {
 
 
     async CheckModel(md) {
-        console.log('touch');
-        console.log(this.db);
         if (this.db) {
-
             let coll = await this.db.collections();
             coll = coll.filter(c => c.collectionName === md.$info.name);
             console.log(coll);
