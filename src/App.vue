@@ -1,8 +1,8 @@
 <template lang="pug">
   div#app.container
+    p {{$route.path}}
     .columns
-      .column.is-3
-        navigate
+      navigate.column.is-3
       router-view.column.is-9
 </template>
 

@@ -1,9 +1,8 @@
 <template lang="pug">
 div
-    .container.is-12
+    .container.is-12.is-centered
         img( alt="Vue logo" src="../assets/logo.png")
-    //- HelloWorld( msg="Welcome to Your Vue.js App")
-    //- button(@click="buttonClick") this is async
+   
     .hero.is-medium.is-primary.is-bold
         .hero-body
             .container

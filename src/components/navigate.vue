@@ -1,8 +1,17 @@
-<template   lang="pug">
-aside.menu
-  p.menu-label General
+<template lang="pug">
+.menu
   ul.menu-list
-    li Dash
+    li
+      router-link(
+        to="/departments" 
+        :class="{'is-active': $route.path == '/departments'} "
+      ).menu-label Department
+      ul 
+        router-link(
+          to="/departments/create"
+          :class="{ 'is-active': $route.path == '/departments/create' } "
+        ) Create Department
+
   p.menu-label Administration
   ul.menu-list
     li Team Settings
@@ -23,6 +32,8 @@ aside.menu
 export default {}
 </script>
 
-<style>
-
+<style scoped lang="scss">
+.menu{
+  margin-left: 0.25rem;
+}
 </style>
