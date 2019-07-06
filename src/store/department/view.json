@@ -28,8 +28,7 @@
         },
         "Location": {
             "bsonType": "object",
-            "required": true,
-            "ref": "dept_location"
+            "required": true
         },
         "Location.Dist": {
             "bsonType": "string",
@@ -56,7 +55,7 @@
             "required": false,
             "sample": "block A"
         },
-        "Location.Floor": {
+        "Location.floor": {
             "bsonType": "string",
             "required": false,
             "sample": "floor 1"
@@ -67,5 +66,4 @@
             "sample": "room 100"
         }
     }
-   
 }

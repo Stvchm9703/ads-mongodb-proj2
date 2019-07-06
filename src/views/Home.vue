@@ -1,8 +1,20 @@
 <template lang="pug">
-  div.home
-    img( alt="Vue logo" src="../assets/logo.png")
-    HelloWorld( msg="Welcome to Your Vue.js App")
-    button(@click="buttonClick") this is async
+div
+    .container.is-12
+        img( alt="Vue logo" src="../assets/logo.png")
+    //- HelloWorld( msg="Welcome to Your Vue.js App")
+    //- button(@click="buttonClick") this is async
+    .hero.is-medium.is-primary.is-bold
+        .hero-body
+            .container
+                h1.title Hi
+                h2.subtitle hero
+
+    .hero.is-medium.is-primary.is-bold
+        .hero-body
+            .container
+                h1.title Hi
+                h2.subtitle hero
 </template>
 
 <script>
