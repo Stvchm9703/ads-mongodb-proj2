@@ -34,7 +34,7 @@
     "babel-eslint": "^10.0.2",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "dns": "^0.2.2",
-    "electron": "5.0.0",
+    "electron": "9.1.0",
     "eslint": "^5.16.0",
     "eslint-plugin-compat": "^3.2.0",
     "eslint-plugin-vue": "^5.0.0",
